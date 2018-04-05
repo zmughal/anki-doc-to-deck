@@ -8,8 +8,6 @@ use Types::Path::Tiny qw(AbsPath AbsDir AbsFile);
 use Types::Standard qw(StrMatch ArrayRef);
 use Path::Tiny;
 
-use File::Basename;
-
 lazy csv_to_apkg_script_path => method() {
 	my $module_dir = path(__FILE__)->parent;
 	$module_dir->child(qw(ApkgGen csv-to-apkg.py));
@@ -50,6 +48,10 @@ has deck_name => (
 	isa => StrMatch[qr/./],
 	required => 1,
 );
+
+method BUILD(@) {
+	die "apkg_filename must end in .apkg" unless $self->apkg_filename =~ /\.apkg$/;
+}
 
 method run() {
 	system(
