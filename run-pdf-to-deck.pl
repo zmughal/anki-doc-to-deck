@@ -13,6 +13,7 @@ use Function::Parameters;
 package DocProcess {
 	use Moo;
 	use Function::Parameters;
+	use Types::Path::Tiny qw(AbsPath);
 	use Path::Tiny;
 
 	use Image::Size;
@@ -22,18 +23,14 @@ package DocProcess {
 
 	use Anki::DocGen::MetadataGen::Empty;
 
-	#use Tree::DAG_Node;
-	#use Encode qw(decode_utf8);
-	#use HTML::Entities qw(encode_entities);
-	#use Capture::Tiny qw(capture_stdout);
-	#use List::UtilsBy qw(min_by);
-
 	has document => ( is => 'ro', required => 1 );
 
 	has zoom_level => ( is => 'ro', default => 1.5 );
 
 	has media_directory => (
 		is => 'ro',
+		isa => AbsPath,
+		coerce => 1,
 		default => method() {
 			Path::Tiny->tempdir;
 		},
@@ -105,7 +102,6 @@ package DocProcess {
 		$note{footer} = '';
 		$note{remarks} = '';
 		$note{sources} = $self->metadata_generator->get_sources($self, $page_number);
-		# sprintf("$base pg. %04d", $page);
 		$note{extra1} = '';
 		$note{extra2} = '';
 		$note{amask} = qq|<img src="@{[ $amask_file->basename ]}" />|;
@@ -130,15 +126,15 @@ package DocProcess {
 	method render_page($page_number) {
 		my $file = $self->filename_for_page($page_number);
 
-		return if -f $file;
-
-		$file->parent->mkpath;
-		$file->spew_raw(
-			$self->document->get_rendered_png_data(
-				page_number => $page_number,
-				zoom_level => $self->zoom_level
-			)
-		);
+		if( ! -f $file ) {
+			$file->parent->mkpath;
+			$file->spew_raw(
+				$self->document->get_rendered_png_data(
+					page_number => $page_number,
+					zoom_level => $self->zoom_level
+				)
+			);
+		}
 
 		$file;
 	}
