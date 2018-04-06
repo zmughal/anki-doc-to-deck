@@ -6,7 +6,10 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 
 use Modern::Perl;
+
 use Anki::DocGen::Doc::PDF;
+use Anki::DocGen::Doc::DOCX;
+
 use Anki::DocGen::ApkgGen;
 use Function::Parameters;
 use Anki::DocGen::Process::Deck;
@@ -15,8 +18,19 @@ use Anki::DocGen::DocSet;
 my @doc_sets = ();
 
 fun add_document( $path ) {
+	my $doc_class;
+
+	if( $path =~ /\.pdf$/i ) {
+		$doc_class = 'Anki::DocGen::Doc::PDF';
+	} elsif( $path =~ /\.docx/i ) {
+		$doc_class = 'Anki::DocGen::Doc::DOCX';
+	} else {
+		warn "Unsupported file: $path";
+		return;
+	}
+
 	push @doc_sets, Anki::DocGen::DocSet->new(
-		document => Anki::DocGen::Doc::PDF->new( filename => $path ),
+		document => $doc_class->new( filename => $path ),
 	);
 }
 
