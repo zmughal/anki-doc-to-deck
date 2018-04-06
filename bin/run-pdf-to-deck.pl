@@ -14,23 +14,15 @@ use Anki::DocGen::ApkgGen;
 use Function::Parameters;
 use Anki::DocGen::Process::Deck;
 use Anki::DocGen::DocSet;
+use Anki::DocGen::DocFactory::ByPath;
 
 my @doc_sets = ();
 
 fun add_document( $path ) {
-	my $doc_class;
-
-	if( $path =~ /\.pdf$/i ) {
-		$doc_class = 'Anki::DocGen::Doc::PDF';
-	} elsif( $path =~ /\.docx/i ) {
-		$doc_class = 'Anki::DocGen::Doc::DOCX';
-	} else {
-		warn "Unsupported file: $path";
-		return;
-	}
-
 	push @doc_sets, Anki::DocGen::DocSet->new(
-		document => $doc_class->new( filename => $path ),
+		document => Anki::DocGen::DocFactory::ByPath->new(
+				filename => $path
+			)->get_doc,
 	);
 }
 
