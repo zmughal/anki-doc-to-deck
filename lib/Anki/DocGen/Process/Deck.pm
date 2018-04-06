@@ -78,8 +78,10 @@ method generate_note_for_page($doc_set, $page_number) {
 	my $occl_id = join( '-' , $uniq_id, $occl_tp);
 	my $note_id = join( '-' , $uniq_id, $occl_tp, $note_nr);
 
+	my @metadata_args = ( $doc_set, $page_number );
+
 	# Make media: page image and Q,A,O masks
-	my $image_file = $self->render_page($doc_set, $page_number);
+	my $image_file = $self->render_page(@metadata_args);
 
 	my $qmask_file = $self->media_directory->child("${note_id}-Q.svg");
 	$qmask_file->spew_utf8( $self->get_mask_svg( $image_file, $note_id, 'Q') );
@@ -91,17 +93,17 @@ method generate_note_for_page($doc_set, $page_number) {
 	$omask_file->spew_utf8( $self->get_mask_svg( $image_file, $note_id, 'O') );
 
 	$note{id} = $note_id;
-	$note{header} = $doc_set->metadata_generator->$_call_if_can( get_header => $doc_set, $page_number) || '';
-	$note{image} = qq|<img src="@{[ $image_file->basename ]}"/>|;
-	$note{qmask} = qq|<img src="@{[ $qmask_file->basename ]}" />|;
-	$note{footer} = '';
-	$note{remarks} = '';
-	$note{sources} = $doc_set->metadata_generator->$_call_if_can(get_sources => $doc_set, $page_number) || '';
-	$note{extra1} = '';
-	$note{extra2} = '';
-	$note{amask} = qq|<img src="@{[ $amask_file->basename ]}" />|;
-	$note{omask} = qq|<img src="@{[ $omask_file->basename ]}" />|;
-	$note{tags} = $doc_set->metadata_generator->$_call_if_can(get_tags => $doc_set, $page_number);
+	$note{header}  = $doc_set->metadata_generator->$_call_if_can( get_header  => @metadata_args ) || '';
+	$note{image}   = qq|<img src="@{[ $image_file->basename ]}"/>|;
+	$note{qmask}   = qq|<img src="@{[ $qmask_file->basename ]}" />|;
+	$note{footer}  = $doc_set->metadata_generator->$_call_if_can( get_footer  => @metadata_args ) || '';
+	$note{remarks} = $doc_set->metadata_generator->$_call_if_can( get_remarks => @metadata_args ) || '';
+	$note{sources} = $doc_set->metadata_generator->$_call_if_can( get_sources => @metadata_args ) || '';
+	$note{extra1}  = $doc_set->metadata_generator->$_call_if_can( get_extra1  => @metadata_args ) || '';
+	$note{extra2}  = $doc_set->metadata_generator->$_call_if_can( get_extra2  => @metadata_args ) || '';
+	$note{amask}   = qq|<img src="@{[ $amask_file->basename ]}" />|;
+	$note{omask}   = qq|<img src="@{[ $omask_file->basename ]}" />|;
+	$note{tags}    = $doc_set->metadata_generator->$_call_if_can( get_tags    => @metadata_args ) || '';
 
 
 	return [ @note{ @fields, qw(tags) } ];
