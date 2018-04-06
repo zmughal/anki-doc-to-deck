@@ -6,55 +6,6 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 
 use Modern::Perl;
+use Anki::DocGen::Command::DocToDeck;
 
-use Anki::DocGen::Doc::PDF;
-use Anki::DocGen::Doc::DOCX;
-
-use Anki::DocGen::ApkgGen;
-use Function::Parameters;
-use Anki::DocGen::Process::Deck;
-use Anki::DocGen::DocSet;
-use Anki::DocGen::DocFactory::ByPath;
-
-my @doc_sets = ();
-
-fun add_document( $path ) {
-	push @doc_sets, Anki::DocGen::DocSet->new(
-		document => Anki::DocGen::DocFactory::ByPath->new(
-				filename => $path
-			)->get_doc,
-	);
-}
-
-
-fun main() {
-	die "Need [pdfs...] [apkg]" if @ARGV < 2;
-
-	while(@ARGV != 1) {
-		add_document( shift @ARGV );
-	}
-	my $apkg_filename = shift @ARGV;
-
-	my $doc_proc = Anki::DocGen::Process::Deck->new();
-
-	my $apkg_gen = Anki::DocGen::ApkgGen->new(
-		csv_filename => $doc_proc->csv_filename,
-		media_directory => $doc_proc->media_directory,
-		deck_name => 'My Deck',
-		apkg_filename => $apkg_filename,
-	);
-
-	for my $doc_set (@doc_sets) {
-		$doc_proc->process( $doc_set );
-	}
-
-	$doc_proc->write_csv;
-
-	$apkg_gen->command([
-		qw(schroot -c anki -- python), $apkg_gen->csv_to_apkg_script_path
-	]);
-
-	$apkg_gen->run;
-}
-
-main;
+Anki::DocGen::Command::DocToDeck->new_with_options->run;
