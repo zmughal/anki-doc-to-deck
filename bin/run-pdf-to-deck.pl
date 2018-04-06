@@ -3,7 +3,7 @@
 # ABSTRACT: Creates a CSV for a deck
 
 use FindBin;
-use lib "$FindBin::Bin/lib";
+use lib "$FindBin::Bin/../lib";
 
 use Modern::Perl;
 
