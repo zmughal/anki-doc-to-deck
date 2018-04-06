@@ -17,4 +17,10 @@ Enhanced|https://github.com/glutanimate/image-occlusion-enhanced> by
 extracting all the pages from the given documents. The fields/tags for each
 card are configurable by using a subclass of C<Anki::DocGen::MetadataGen>.
 
+Note that once you import the Anki .apkg deck, if you want to edit them using
+the Image Occlusion Editor, then you need to go to the card browser and select
+all the cards with the imported note type (e.g., C<Image Occlusion
+Enhanced-312b0>) and use C<< Edit -> Change Note Type... >> to set the note
+type to C<Image Occlusion Enhanced>.
+
 =cut
