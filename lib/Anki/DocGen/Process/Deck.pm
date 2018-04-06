@@ -1,6 +1,7 @@
 package Anki::DocGen::Process::Deck;
 # ABSTRACT: Process deck
 
+use Modern::Perl;
 use Moo;
 use Function::Parameters;
 use Types::Path::Tiny qw(AbsPath);
@@ -12,10 +13,6 @@ use UUID::Tiny ':std';
 use Text::CSV_XS qw(csv);
 
 use Anki::DocGen::MetadataGen::Empty;
-
-has document => ( is => 'ro', required => 1 );
-
-has zoom_level => ( is => 'ro', default => 1.5 );
 
 has media_directory => (
 	is => 'ro',
@@ -32,7 +29,6 @@ has metadata_generator => (
 		Anki::DocGen::MetadataGen::Empty->new;
 	}
 );
-
 
 has csv_filename => (
 	is => 'ro',
@@ -54,12 +50,19 @@ method write_csv() {
 	);
 }
 
-method add_note_for_page($page_number) {
-	push @{ $self->_csv_data },
-		$self->generate_note_for_page($page_number);
+method process( $doc_set ) {
+	for my $page (@{ $doc_set->pages }) {
+		say $page;
+		$self->add_note_for_page($doc_set, $page);
+	}
 }
 
-method generate_note_for_page($page_number) {
+method add_note_for_page($doc_set, $page_number) {
+	push @{ $self->_csv_data },
+		$self->generate_note_for_page($doc_set, $page_number);
+}
+
+method generate_note_for_page($doc_set, $page_number) {
 	my @fields = qw( id header image qmask footer remarks sources extra1 extra2 amask omask );
 
 	my %note;
@@ -74,7 +77,7 @@ method generate_note_for_page($page_number) {
 	my $note_id = join( '-' , $uniq_id, $occl_tp, $note_nr);
 
 	# Make media: page image and Q,A,O masks
-	my $image_file = $self->render_page($page_number);
+	my $image_file = $self->render_page($doc_set, $page_number);
 
 	my $qmask_file = $self->media_directory->child("${note_id}-Q.svg");
 	$qmask_file->spew_utf8( $self->get_mask_svg( $image_file, $note_id, 'Q') );
@@ -86,42 +89,42 @@ method generate_note_for_page($page_number) {
 	$omask_file->spew_utf8( $self->get_mask_svg( $image_file, $note_id, 'O') );
 
 	$note{id} = $note_id;
-	$note{header} = $self->metadata_generator->get_header($self, $page_number);
+	$note{header} = $doc_set->metadata_generator->get_header($doc_set, $page_number);
 	$note{image} = qq|<img src="@{[ $image_file->basename ]}"/>|;
 	$note{qmask} = qq|<img src="@{[ $qmask_file->basename ]}" />|;
 	$note{footer} = '';
 	$note{remarks} = '';
-	$note{sources} = $self->metadata_generator->get_sources($self, $page_number);
+	$note{sources} = $doc_set->metadata_generator->get_sources($doc_set, $page_number);
 	$note{extra1} = '';
 	$note{extra2} = '';
 	$note{amask} = qq|<img src="@{[ $amask_file->basename ]}" />|;
 	$note{omask} = qq|<img src="@{[ $omask_file->basename ]}" />|;
-	$note{tags} = $self->metadata_generator->get_tags($self, $page_number);
+	$note{tags} = $doc_set->metadata_generator->get_tags($doc_set, $page_number);
 
 
 	return [ @note{ @fields, qw(tags) } ];
 }
 
-method filename_for_page($page_number) {
+method filename_for_page($doc_set, $page_number) {
 	my $filename =
-		$self->metadata_generator->can( 'get_media_filename')
-		? $self->metadata_generator->get_media_filename(
-			$self,
+		$doc_set->metadata_generator->can( 'get_media_filename')
+		? $doc_set->metadata_generator->get_media_filename(
+			$doc_set,
 			$page_number )
-		: "@{[ $self->document->basename ]} ${page_number}.png";
+		: "@{[ $doc_set->document->basename ]} ${page_number}.png";
 
 	$self->media_directory->child( $filename );
 }
 
-method render_page($page_number) {
-	my $file = $self->filename_for_page($page_number);
+method render_page($doc_set, $page_number) {
+	my $file = $self->filename_for_page($doc_set, $page_number);
 
 	if( ! -f $file ) {
 		$file->parent->mkpath;
 		$file->spew_raw(
-			$self->document->get_rendered_png_data(
+			$doc_set->document->get_rendered_png_data(
 				page_number => $page_number,
-				zoom_level => $self->zoom_level
+				zoom_level => $doc_set->zoom_level
 			)
 		);
 	}

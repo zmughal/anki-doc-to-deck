@@ -10,39 +10,36 @@ use Anki::DocGen::Doc::PDF;
 use Anki::DocGen::ApkgGen;
 use Function::Parameters;
 use Anki::DocGen::Process::Deck;
+use Anki::DocGen::DocSet;
 
-sub main {
-	die "Need [pdf] [apkg]" if @ARGV != 2;
-	my $pdf_filename = $ARGV[0];
-	my $apkg_filename = $ARGV[1];
+my @doc_sets = ();
 
-	my $doc = Anki::DocGen::Doc::PDF->new( filename => $pdf_filename );
-
-	my $metadata_class = Role::Tiny->create_class_with_roles(
-		'Anki::DocGen::MetadataGen',
-		qw(
-			Anki::DocGen::MetadataGen::Role::CopyFromSourcesFieldHeader
-			Anki::DocGen::MetadataGen::Role::BasenamePageNumSources
-			Anki::DocGen::MetadataGen::Role::EmptyTags
-		),
+fun add_document( $path ) {
+	push @doc_sets, Anki::DocGen::DocSet->new(
+		document => Anki::DocGen::Doc::PDF->new( filename => $path ),
 	);
+}
 
-	my $doc_proc = Anki::DocGen::Process::Deck->new(
-		document => $doc,
-		metadata_generator => $metadata_class->new,
-	);
+
+fun main() {
+	die "Need [pdfs...] [apkg]" if @ARGV < 2;
+
+	while(@ARGV != 1) {
+		add_document( shift @ARGV );
+	}
+	my $apkg_filename = shift @ARGV;
+
+	my $doc_proc = Anki::DocGen::Process::Deck->new();
 
 	my $apkg_gen = Anki::DocGen::ApkgGen->new(
 		csv_filename => $doc_proc->csv_filename,
 		media_directory => $doc_proc->media_directory,
-		deck_name => $doc_proc->document->basename,
+		deck_name => 'My Deck',
 		apkg_filename => $apkg_filename,
 	);
 
-	my $n_pages = $doc->number_of_pages;
-	for my $page (1..$n_pages) {
-		say $page;
-		$doc_proc->add_note_for_page($page);
+	for my $doc_set (@doc_sets) {
+		$doc_proc->process( $doc_set );
 	}
 
 	$doc_proc->write_csv;
