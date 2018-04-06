@@ -23,4 +23,14 @@ all the cards with the imported note type (e.g., C<Image Occlusion
 Enhanced-312b0>) and use C<< Edit -> Change Note Type... >> to set the note
 type to C<Image Occlusion Enhanced>.
 
+=head1 EXAMPLE
+
+Cards made using L<Lecture 20 Lab-on-a-Chip.pdf|http://www-bsac.eecs.berkeley.edu/projects/ee245/Lectures/lecturepdfs/Lecture%2020%20Lab-on-a-Chip.pdf>
+
+=begin html
+
+<img src="https://raw.githubusercontent.com/zmughal/anki-doc-to-cards/master/doc/example.png" />
+
+=end html
+
 =cut
