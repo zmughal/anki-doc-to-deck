@@ -7,6 +7,8 @@ use Function::Parameters;
 use Types::Path::Tiny qw(AbsPath);
 use Path::Tiny;
 
+use Safe::Isa;
+
 use Image::Size;
 use SVG;
 use UUID::Tiny ':std';
@@ -89,17 +91,17 @@ method generate_note_for_page($doc_set, $page_number) {
 	$omask_file->spew_utf8( $self->get_mask_svg( $image_file, $note_id, 'O') );
 
 	$note{id} = $note_id;
-	$note{header} = $doc_set->metadata_generator->get_header($doc_set, $page_number);
+	$note{header} = $doc_set->metadata_generator->$_call_if_can( get_header => $doc_set, $page_number) || '';
 	$note{image} = qq|<img src="@{[ $image_file->basename ]}"/>|;
 	$note{qmask} = qq|<img src="@{[ $qmask_file->basename ]}" />|;
 	$note{footer} = '';
 	$note{remarks} = '';
-	$note{sources} = $doc_set->metadata_generator->get_sources($doc_set, $page_number);
+	$note{sources} = $doc_set->metadata_generator->$_call_if_can(get_sources => $doc_set, $page_number) || '';
 	$note{extra1} = '';
 	$note{extra2} = '';
 	$note{amask} = qq|<img src="@{[ $amask_file->basename ]}" />|;
 	$note{omask} = qq|<img src="@{[ $omask_file->basename ]}" />|;
-	$note{tags} = $doc_set->metadata_generator->get_tags($doc_set, $page_number);
+	$note{tags} = $doc_set->metadata_generator->$_call_if_can(get_tags => $doc_set, $page_number);
 
 
 	return [ @note{ @fields, qw(tags) } ];
@@ -107,11 +109,11 @@ method generate_note_for_page($doc_set, $page_number) {
 
 method filename_for_page($doc_set, $page_number) {
 	my $filename =
-		$doc_set->metadata_generator->can( 'get_media_filename')
-		? $doc_set->metadata_generator->get_media_filename(
-			$doc_set,
-			$page_number )
-		: "@{[ $doc_set->document->basename ]} ${page_number}.png";
+		$doc_set->metadata_generator->$_call_if_can(
+			get_media_filename =>
+				$doc_set,
+				$page_number )
+		|| "@{[ $doc_set->document->basename ]} ${page_number}.png";
 
 	$self->media_directory->child( $filename );
 }
