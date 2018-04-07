@@ -119,7 +119,7 @@ method get_page_text( $page_number ) {
 }
 
 method get_page_header_text( $page_number ) {
-	my $text = $self->get_page_text( $page_number );
+	my $text = $self->get_page_text( $page_number ) // '';
 	$text =~ s/^\s*$//gm;
 	$text =~ s/[^\w\s]//gm;
 	$text =~ s/^\n//gm;
@@ -127,15 +127,16 @@ method get_page_header_text( $page_number ) {
 	my ($line1, $line2) = split(/\n/, $text);
 	my ($first_n_chars) = $text =~ /((?:\s*\S){20})/m;
 
-	my $line_title = "$line1 $line2";
+	my $line_title = defined $line1 && defined $line2 ? "$line1 $line2" : undef;
 	my $char_title = $first_n_chars;
 
 	my $title = min_by { length $_ }
 		grep { $_ !~ /^\s*$/ }
 		map { s/\n|(^\s+)|(\s+$)//gr }
+		grep { defined }
 		($line_title, $char_title);
 
-	return $title;
+	return $title // '';
 }
 
 1;
