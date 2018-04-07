@@ -4,8 +4,8 @@ package Anki::DocGen::MetadataGen::Role::OutlineHeader;
 use Moo::Role;
 use Function::Parameters;
 
-method get_header($doc_proc, $page_number) {
-	"" . $doc_proc->document->_heading_data->[$page_number]->{text};
+method get_header($doc_set, $page_number) {
+	"" . $doc_set->document->_heading_data->[$page_number]->{text};
 }
 
 1;
