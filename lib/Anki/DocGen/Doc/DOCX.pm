@@ -27,7 +27,10 @@ lazy _pdf_doc =>
 		);
 	},
 	(
-		handles => [ qw(number_of_pages get_rendered_png_data) ],
+		handles => [ qw(
+			number_of_pages get_rendered_png_data
+			get_page_text get_page_header_text
+		)],
 	);
 
 lazy _temp_pdf_filename => method() {
