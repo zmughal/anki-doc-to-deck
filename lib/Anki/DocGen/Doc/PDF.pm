@@ -101,20 +101,25 @@ lazy _heading_data => method() {
 	\@page_to_heading;
 };
 
-method get_page_header_text( $page_number ) {
-	my $file = $self->filename;
+method get_page_text( $page_number ) {
 	my ($stdout, $exit) = capture_stdout {
 		system(
 			PDFTOTEXT_PATH,
 			qw(-f), $page_number,
 			qw(-l), $page_number,
 			qw(-enc UTF-8),
-			"$file",
+			"@{[ $self->filename ]}",
 			qw(-)
 		);
 	};
 
 	my $text = decode_utf8($stdout);
+
+	return $text;
+}
+
+method get_page_header_text( $page_number ) {
+	my $text = $self->get_page_text( $page_number );
 	$text =~ s/^\s*$//gm;
 	$text =~ s/[^\w\s]//gm;
 	$text =~ s/^\n//gm;
