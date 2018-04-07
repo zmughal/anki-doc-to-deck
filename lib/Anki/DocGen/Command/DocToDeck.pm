@@ -4,9 +4,6 @@ package Anki::DocGen::Command::DocToDeck;
 use Moo;
 use CLI::Osprey;
 
-use Anki::DocGen::Doc::PDF;
-use Anki::DocGen::Doc::DOCX;
-
 use Anki::DocGen::ApkgGen;
 use Function::Parameters;
 use Anki::DocGen::Process::Deck;

@@ -3,6 +3,7 @@ package Anki::DocGen::DocFactory::ByPath;
 
 use Moo;
 use Function::Parameters;
+use Object::Util;
 
 has filename => (
 	is => 'ro',
@@ -10,7 +11,7 @@ has filename => (
 );
 
 method get_doc() {
-	$self->get_doc_class->new(
+	$self->get_doc_class->$_new(
 		filename => $self->filename
 	);
 }
