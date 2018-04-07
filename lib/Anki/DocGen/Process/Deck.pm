@@ -48,7 +48,8 @@ method write_csv() {
 	csv(
 		in => $self->_csv_data,
 		out => $self->csv_filename->stringify,
-		sep_char => ";"
+		sep_char => ";",
+		encoding => "UTF-8",
 	);
 }
 
