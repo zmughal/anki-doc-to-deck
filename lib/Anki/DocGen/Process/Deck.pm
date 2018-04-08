@@ -13,6 +13,7 @@ use Image::Size;
 use SVG;
 use UUID::Tiny ':std';
 use Text::CSV_XS qw(csv);
+use Term::ProgressBar;
 
 use Anki::DocGen::MetadataGen::Empty;
 
@@ -54,10 +55,20 @@ method write_csv() {
 }
 
 method process( $doc_set ) {
+	say "Generating cards for ", $doc_set->document->filename;
+
+	my $progress_bar = Term::ProgressBar->new({
+		name => $doc_set->document->basename,
+		count => scalar @{ $doc_set->pages },
+		remove => 0,
+	});
+
+	my $count = 0;
 	for my $page (@{ $doc_set->pages }) {
-		say $page;
 		$self->add_note_for_page($doc_set, $page);
+		$progress_bar->update(++$count);
 	}
+	say "\n";
 }
 
 method add_note_for_page($doc_set, $page_number) {
