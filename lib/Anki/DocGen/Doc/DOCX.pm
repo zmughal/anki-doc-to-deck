@@ -7,6 +7,8 @@ use Function::Parameters;
 use Path::Tiny;
 use File::Which;
 
+use Anki::DocGen::Doc::PDF;
+
 extends qw(Anki::DocGen::Doc);
 
 use constant UNOCONV_COMMAND => 'unoconv';
