@@ -23,7 +23,7 @@ method get_doc_class() {
 
 	if( $path =~ /\.pdf$/i ) {
 		$doc_class = 'Anki::DocGen::Doc::PDF';
-	} elsif( $path =~ /\.docx/i ) {
+	} elsif( $path =~ /\.(docx?|pptx?)/i ) {
 		$doc_class = 'Anki::DocGen::Doc::DOCX';
 	} else {
 		warn "Unsupported file: $path";

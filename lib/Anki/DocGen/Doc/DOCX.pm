@@ -18,7 +18,7 @@ BEGIN {
 }
 
 lazy basename => method() {
-	$self->filename->basename(qw(.docx));
+	$self->filename->basename(qw(.docx .doc .pptx .ppt));
 };
 
 lazy _pdf_doc =>
