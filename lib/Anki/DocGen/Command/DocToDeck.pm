@@ -9,6 +9,7 @@ use Function::Parameters;
 use Anki::DocGen::Process::Deck;
 
 use Anki::DocGen::Process::Deck::ImageOcclusionEnhanced;
+use Anki::DocGen::Process::Deck::BasicFrontBack;
 
 use Anki::DocGen::DocSet;
 use Anki::DocGen::DocFactory::ByPath;
@@ -19,6 +20,14 @@ option deck_name => (
 	required => 0,
 	doc => 'Name of the deck to create (default: My Deck)',
 	default => 'My Deck',
+);
+
+option deck_generator => (
+	is => 'ro',
+	format => 's',
+	required => 0,
+	doc => 'Type of deck generation: io|basic-front-back',
+	default => 'io',
 );
 
 my @doc_sets = ();
@@ -40,6 +49,11 @@ method run() {
 	my $apkg_filename = shift @ARGV;
 
 	my $processor_class = 'Anki::DocGen::Process::Deck::ImageOcclusionEnhanced';
+	if(  $self->deck_generator eq 'io' ) {
+		$processor_class = 'Anki::DocGen::Process::Deck::ImageOcclusionEnhanced';
+	} elsif( $self->deck_generator eq 'basic-front-back' ) {
+		$processor_class = 'Anki::DocGen::Process::Deck::BasicFrontBack';
+	}
 
 	my $doc_proc = $processor_class->new();
 
