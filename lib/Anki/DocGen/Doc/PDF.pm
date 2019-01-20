@@ -11,7 +11,7 @@ use Encode qw(decode_utf8);
 use Capture::Tiny qw(capture_stdout);
 use List::UtilsBy qw(min_by);
 
-use Renard::Incunabula::Format::PDF::Document;
+use Renard::Block::Format::PDF::Document;
 
 use constant PDFTOTEXT_PATH => 'pdftotext';
 
@@ -23,7 +23,7 @@ lazy basename => method() {
 
 lazy _renard_doc =>
 	method() {
-		Renard::Incunabula::Format::PDF::Document->new(
+		Renard::Block::Format::PDF::Document->new(
 			filename => $self->filename
 		);
 	},
