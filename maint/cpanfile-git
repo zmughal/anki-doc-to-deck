@@ -1,0 +1,3 @@
+requires 'Renard::Block::Format::PDF',
+	git => 'https://github.com/project-renard/p5-Renard-Block-Format-PDF.git',
+	branch => 'master';

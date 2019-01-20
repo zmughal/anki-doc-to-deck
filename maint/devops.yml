@@ -1,0 +1,10 @@
+native:
+  debian:
+    packages:
+      - anki
+      - unoconv
+      - poppler-utils
+  macos-homebrew:
+    packages: ~
+  msys2-mingw64:
+    packages: ~
