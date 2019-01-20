@@ -7,6 +7,9 @@ use CLI::Osprey;
 use Anki::DocGen::ApkgGen;
 use Function::Parameters;
 use Anki::DocGen::Process::Deck;
+
+use Anki::DocGen::Process::Deck::ImageOcclusionEnhanced;
+
 use Anki::DocGen::DocSet;
 use Anki::DocGen::DocFactory::ByPath;
 
@@ -36,13 +39,16 @@ method run() {
 	}
 	my $apkg_filename = shift @ARGV;
 
-	my $doc_proc = Anki::DocGen::Process::Deck->new();
+	my $processor_class = 'Anki::DocGen::Process::Deck::ImageOcclusionEnhanced';
+
+	my $doc_proc = $processor_class->new();
 
 	my $apkg_gen = Anki::DocGen::ApkgGen->new(
 		csv_filename => $doc_proc->csv_filename,
 		media_directory => $doc_proc->media_directory,
 		deck_name => $self->deck_name,
 		apkg_filename => $apkg_filename,
+		model_name => $doc_proc->model_name,
 	);
 
 	for my $doc_set (@doc_sets) {

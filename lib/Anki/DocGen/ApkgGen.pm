@@ -49,6 +49,12 @@ has deck_name => (
 	required => 1,
 );
 
+has model_name => (
+	is => 'ro',
+	isa => StrMatch[qr/./],
+	required => 1,
+);
+
 method BUILD(@) {
 	die "apkg_filename must end in .apkg" unless $self->apkg_filename =~ /\.apkg$/;
 }
@@ -61,6 +67,7 @@ method run() {
 		qw(--deck-name)      , $self->deck_name,
 		qw(--apkg-filename)  , $self->apkg_filename,
 		qw(--media-directory), $self->media_directory,
+		qw(--model-name)     , $self->model_name,
 	)
 }
 

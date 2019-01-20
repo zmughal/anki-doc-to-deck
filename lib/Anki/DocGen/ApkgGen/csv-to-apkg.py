@@ -36,6 +36,7 @@ def argparser():
   required.add_argument('--deck-name', help='Name of Anki deck', required=True)
   required.add_argument('--apkg-filename', help='APKG filename', required=True)
   required.add_argument('--media-directory', help='Anki media directory', required=True)
+  required.add_argument('--model-name', help='Model name', required=True)
 
   return parser
 
@@ -48,6 +49,7 @@ def main():
   deck_name = args.deck_name
   apkg_filename = args.apkg_filename
   media_directory = args.media_directory
+  model_name = args.model_name
 
   # this is removed at the end of the program
   TMPDIR = tempfile.mkdtemp()
@@ -57,7 +59,11 @@ def main():
   deck_id = collection.decks.id(deck_name)
   deck = collection.decks.get(deck_id)
 
-  model = add_io_model(collection)
+  if model_name == 'Image Occlusion Enhanced':
+    model = add_io_model(collection)
+  else:
+    model = collection.models.byName(model_name).copy()
+
   model['did'] = deck_id
 
   collection.models.update(model)
