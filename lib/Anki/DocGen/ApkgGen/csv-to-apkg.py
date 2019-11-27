@@ -30,7 +30,7 @@ CSV_IO_FLDS_IDS = ["id", "hd", "im", "qm",  "ft", "rk",
               "sc", "e1", "e2", "am", "om"]
 
 def argparser():
-  parser = argparse.ArgumentParser(description='Conversts semicolon CSV to Anki APKG file')
+  parser = argparse.ArgumentParser(description='Converts semicolon CSV to Anki APKG file')
   required = parser.add_argument_group('required arguments')
   required.add_argument('--csv-filename', help='CSV input file', required=True)
   required.add_argument('--deck-name', help='Name of Anki deck', required=True)
