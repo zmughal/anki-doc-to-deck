@@ -26,6 +26,7 @@ has metadata_generator => (
 				Anki::DocGen::MetadataGen::Role::BasenamePageNumSources
 				Anki::DocGen::MetadataGen::Role::EmptyTags
 				Anki::DocGen::MetadataGen::Role::PageTextRemarks
+				Anki::DocGen::MetadataGen::Role::MediaFilenamePadding
 			),
 		);
 
