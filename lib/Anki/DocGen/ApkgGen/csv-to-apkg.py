@@ -23,8 +23,47 @@ import anki
 from anki.exporting import AnkiPackageExporter
 from anki.importing import TextImporter
 
-from image_occlusion_enhanced.template import add_io_model
-from image_occlusion_enhanced.config import IO_FLDS
+from unittest.mock import Mock
+import types
+
+for module_name in ['aqt', 'aqt.qt', 'aqt.editor', 'aqt.addcards',
+    'aqt.editcurrent', 'aqt.reviewer', 'aqt.utils']:
+  bogus_module = types.ModuleType(module_name)
+  sys.modules[module_name] = bogus_module
+sys.modules['aqt'].mw = Mock()
+sys.modules['aqt'].webview = Mock()
+sys.modules['aqt'].deckchooser = Mock()
+sys.modules['aqt'].tagedit = Mock()
+sys.modules['aqt'].sip = Mock()
+
+class Editor:
+  def setNote():
+    pass
+sys.modules['aqt.editor'].Editor = Editor
+
+sys.modules['aqt.editor'].EditorWebView = Mock()
+sys.modules['aqt.addcards'].AddCards = Mock()
+sys.modules['aqt.editcurrent'].EditCurrent = Mock()
+
+class Reviewer:
+  def _showAnswer():
+    pass
+sys.modules['aqt.reviewer'].Reviewer = Reviewer
+
+sys.modules['aqt.utils'].tooltip = Mock()
+sys.modules['aqt.utils'].showWarning = Mock()
+sys.modules['aqt.utils'].saveGeom = Mock()
+sys.modules['aqt.utils'].restoreGeom = Mock()
+sys.modules['aqt.utils'].showInfo = Mock()
+sys.modules['aqt.qt'].QDialog = Mock()
+sys.modules['aqt.qt'].QAction = Mock()
+
+# From image_occlusion_enhanced plugin
+image_occlusion_enhanced = __import__('1374772155', fromlist=['config', 'template'])
+# from image_occlusion_enhanced.config import IO_FLDS
+IO_FLDS = image_occlusion_enhanced.config.IO_FLDS
+# from image_occlusion_enhanced.template import add_io_model
+add_io_model = image_occlusion_enhanced.template.add_io_model
 
 CSV_IO_FLDS_IDS = ["id", "hd", "im", "qm",  "ft", "rk",
               "sc", "e1", "e2", "am", "om"]
