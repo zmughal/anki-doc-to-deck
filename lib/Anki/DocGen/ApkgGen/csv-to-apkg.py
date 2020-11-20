@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # See example at <https://superuser.com/questions/698902/can-i-create-an-anki-deck-from-a-csv-file>

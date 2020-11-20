@@ -71,10 +71,6 @@ method run() {
 
 	$doc_proc->write_csv;
 
-	$apkg_gen->command([
-		qw(schroot -c anki -- python), $apkg_gen->csv_to_apkg_script_path
-	]);
-
 	$apkg_gen->run;
 }
 

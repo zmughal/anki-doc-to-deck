@@ -17,7 +17,7 @@ has command => (
 	is => 'rw',
 	isa => ArrayRef,
 	default => method() {
-		[ qw(python), $self->csv_to_apkg_script_path ]
+		[ qw(python3), $self->csv_to_apkg_script_path ]
 	},
 );
 
