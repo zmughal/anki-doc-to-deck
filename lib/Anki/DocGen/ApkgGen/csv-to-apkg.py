@@ -26,37 +26,30 @@ from anki.importing import TextImporter
 from unittest.mock import Mock
 import types
 
-for module_name in ['aqt', 'aqt.qt', 'aqt.editor', 'aqt.addcards',
-    'aqt.editcurrent', 'aqt.reviewer', 'aqt.utils']:
+mock_modules_imports = {
+  'aqt': 'mw webview deckchooser tagedit sip'.split(),
+  'aqt.qt': 'QDialog QAction'.split(),
+  'aqt.utils': 'tooltip showWarning saveGeom restoreGeom showInfo'.split(),
+  'aqt.editor': 'Editor EditorWebView'.split(),
+  'aqt.addcards': 'AddCards'.split(),
+  'aqt.reviewer': 'Reviewer'.split(),
+  'aqt.editcurrent': 'EditCurrent'.split()
+}
+for module_name, attrs in mock_modules_imports.items():
   bogus_module = types.ModuleType(module_name)
   sys.modules[module_name] = bogus_module
-sys.modules['aqt'].mw = Mock()
-sys.modules['aqt'].webview = Mock()
-sys.modules['aqt'].deckchooser = Mock()
-sys.modules['aqt'].tagedit = Mock()
-sys.modules['aqt'].sip = Mock()
-
+  for attr in attrs:
+    setattr(bogus_module, attr, Mock())
 class Editor:
   def setNote():
     pass
 sys.modules['aqt.editor'].Editor = Editor
-
-sys.modules['aqt.editor'].EditorWebView = Mock()
-sys.modules['aqt.addcards'].AddCards = Mock()
-sys.modules['aqt.editcurrent'].EditCurrent = Mock()
 
 class Reviewer:
   def _showAnswer():
     pass
 sys.modules['aqt.reviewer'].Reviewer = Reviewer
 
-sys.modules['aqt.utils'].tooltip = Mock()
-sys.modules['aqt.utils'].showWarning = Mock()
-sys.modules['aqt.utils'].saveGeom = Mock()
-sys.modules['aqt.utils'].restoreGeom = Mock()
-sys.modules['aqt.utils'].showInfo = Mock()
-sys.modules['aqt.qt'].QDialog = Mock()
-sys.modules['aqt.qt'].QAction = Mock()
 
 # From image_occlusion_enhanced plugin
 image_occlusion_enhanced = __import__('1374772155', fromlist=['config', 'template'])
