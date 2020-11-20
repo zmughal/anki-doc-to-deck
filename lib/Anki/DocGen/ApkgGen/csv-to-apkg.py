@@ -8,7 +8,7 @@ import os
 ANKI_LIB = '/usr/share/anki'
 ANKI_ADDONS_PATH = os.path.join(
   os.path.expanduser('~'),
-  'Documents/Anki/addons')
+  '.local/share/Anki2/addons21')
 
 import sys
 import tempfile
